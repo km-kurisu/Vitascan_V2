@@ -1,0 +1,9 @@
+/backend/path_b_blood_report/   @km-kurisu
+/research/gat_training/          @km-kurisu
+/backend/path_a_symptom_image/  @khandelwal10urvi @nehaparab25
+/research/cnn_training/          @khandelwal10urvi @nehaparab25
+/backend/mod_c_explainer/       @teammate-3
+/backend/run_pipeline.py        @teammate-3 @km-kurisu
+/backend/shared/                @teammate-3 @nehaparab25
+/frontend/                      @nehaparab25
+/docs/schemas/                  @km-kurisu @khandelwal10urvi @teammate-3 @nehaparab25

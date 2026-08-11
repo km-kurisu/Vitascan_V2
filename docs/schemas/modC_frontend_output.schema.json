@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ModCFrontendOutput",
+  "description": "Mod C merged final output contract for Frontend consumption",
+  "type": "object",
+  "required": [
+    "generated_at",
+    "schema_version",
+    "patient",
+    "deficiencies",
+    "summary"
+  ],
+  "properties": {
+    "generated_at": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "patient": {
+      "type": "object",
+      "required": ["patient_id", "age", "gender"],
+      "properties": {
+        "patient_id": { "type": "string" },
+        "age": { "type": "integer" },
+        "gender": { "type": "string" }
+      }
+    },
+    "deficiencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "severity",
+          "explanation",
+          "key_contributors",
+          "crosscheck",
+          "diet_recommendations"
+        ],
+        "properties": {
+          "type": { "type": "string" },
+          "severity": {
+            "type": "object",
+            "required": ["band", "score_pct", "badge_color"],
+            "properties": {
+              "band": { "type": "string" },
+              "score_pct": { "type": "string" },
+              "badge_color": { "type": "string" }
+            }
+          },
+          "explanation": { "type": "string" },
+          "key_contributors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["biomarker", "impact_pct", "direction"],
+              "properties": {
+                "biomarker": { "type": "string" },
+                "impact_pct": { "type": "number" },
+                "direction": { "type": "string" }
+              }
+            }
+          },
+          "crosscheck": {
+            "type": "object",
+            "required": ["available", "agrees", "source"],
+            "properties": {
+              "available": { "type": "boolean" },
+              "agrees": { "type": "boolean" },
+              "source": { "type": "string" }
+            }
+          },
+          "diet_recommendations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["suggestion", "fssai_checked"],
+              "properties": {
+                "suggestion": { "type": "string" },
+                "fssai_checked": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["flagged_deficiency_count", "overall_risk_band"],
+      "properties": {
+        "flagged_deficiency_count": { "type": "integer" },
+        "overall_risk_band": { "type": "string" }
+      }
+    }
+  }
+}

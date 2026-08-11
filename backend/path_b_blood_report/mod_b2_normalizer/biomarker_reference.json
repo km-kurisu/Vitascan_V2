@@ -1,0 +1,85 @@
+{
+  "biomarkers": {
+    "ferritin": {
+      "canonical_name": "Serum Ferritin",
+      "aliases": ["ferritin", "serum ferritin", "s. ferritin", "ferritin level"],
+      "standard_unit": "ng/mL",
+      "ref_range_female": { "min": 13.0, "max": 150.0 },
+      "ref_range_male": { "min": 30.0, "max": 400.0 },
+      "unit_conversions": {
+        "ug/l": 1.0,
+        "ng/ml": 1.0,
+        "pmol/l": 0.449
+      }
+    },
+    "hemoglobin": {
+      "canonical_name": "Hemoglobin",
+      "aliases": ["hemoglobin", "hb", "hgb", "total hemoglobin", "serum hb"],
+      "standard_unit": "g/dL",
+      "ref_range_female": { "min": 12.0, "max": 15.5 },
+      "ref_range_male": { "min": 13.5, "max": 17.5 },
+      "unit_conversions": {
+        "g/dl": 1.0,
+        "g/l": 0.1,
+        "mmol/l": 1.61
+      }
+    },
+    "b12": {
+      "canonical_name": "Vitamin B12",
+      "aliases": ["b12", "vitamin b12", "cobalamin", "serum b12", "vit b12"],
+      "standard_unit": "pg/mL",
+      "ref_range_female": { "min": 200.0, "max": 900.0 },
+      "ref_range_male": { "min": 200.0, "max": 900.0 },
+      "unit_conversions": {
+        "pg/ml": 1.0,
+        "pmol/l": 1.355,
+        "ng/l": 1.0
+      }
+    },
+    "folate": {
+      "canonical_name": "Serum Folate",
+      "aliases": ["folate", "serum folate", "folic acid", "vitamin b9", "vit b9"],
+      "standard_unit": "ng/mL",
+      "ref_range_female": { "min": 4.6, "max": 18.7 },
+      "ref_range_male": { "min": 4.6, "max": 18.7 },
+      "unit_conversions": {
+        "ng/ml": 1.0,
+        "nmol/l": 0.441
+      }
+    },
+    "tibc": {
+      "canonical_name": "Total Iron Binding Capacity (TIBC)",
+      "aliases": ["tibc", "total iron binding capacity", "s. tibc"],
+      "standard_unit": "mcg/dL",
+      "ref_range_female": { "min": 250.0, "max": 450.0 },
+      "ref_range_male": { "min": 250.0, "max": 450.0 },
+      "unit_conversions": {
+        "mcg/dl": 1.0,
+        "ug/dl": 1.0,
+        "umol/l": 5.587
+      }
+    },
+    "iron": {
+      "canonical_name": "Serum Iron",
+      "aliases": ["iron", "serum iron", "s. iron", "fe"],
+      "standard_unit": "mcg/dL",
+      "ref_range_female": { "min": 60.0, "max": 170.0 },
+      "ref_range_male": { "min": 65.0, "max": 175.0 },
+      "unit_conversions": {
+        "mcg/dl": 1.0,
+        "ug/dl": 1.0,
+        "umol/l": 5.587
+      }
+    },
+    "mcv": {
+      "canonical_name": "Mean Corpuscular Volume (MCV)",
+      "aliases": ["mcv", "mean corpuscular volume"],
+      "standard_unit": "fL",
+      "ref_range_female": { "min": 80.0, "max": 100.0 },
+      "ref_range_male": { "min": 80.0, "max": 100.0 },
+      "unit_conversions": {
+        "fl": 1.0
+      }
+    }
+  }
+}

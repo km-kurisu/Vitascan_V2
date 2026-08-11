@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ModB3Output",
+  "description": "Path B (Blood Report Pipeline) severity grading output to Mod C",
+  "type": "object",
+  "required": [
+    "patient_id",
+    "severity",
+    "attention_weights",
+    "baseline_comparison",
+    "model_confidence"
+  ],
+  "properties": {
+    "patient_id": {
+      "type": "string"
+    },
+    "severity": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["score", "band", "model"],
+        "properties": {
+          "score": { "type": "number" },
+          "band": { "type": "string", "enum": ["none", "mild", "moderate", "severe"] },
+          "model": { "type": "string" }
+        }
+      }
+    },
+    "attention_weights": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "number" }
+      }
+    },
+    "baseline_comparison": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "number" }
+      }
+    },
+    "model_confidence": {
+      "type": "number"
+    }
+  }
+}
