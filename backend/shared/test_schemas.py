@@ -1,7 +1,7 @@
-"""
-Tests verifying that backend Pydantic models validate properly
-and produce JSON conforming to docs/schemas/*.json specifications.
-"""
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
 from backend.shared.schemas import (
     ModB3Output,
     SeverityDetail,
