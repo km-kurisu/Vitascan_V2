@@ -7,8 +7,12 @@ import { Activity, CheckCircle2, Clock, ArrowRight, Brain, FileText, Camera } fr
 export default function ProcessingPage() {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
+  const [patientId, setPatientId] = useState('PAT-PROCESSING');
 
   useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('vitascan_patient_id') : null;
+    if (stored) setPatientId(stored);
+
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -24,7 +28,7 @@ export default function ProcessingPage() {
   }, [router]);
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 py-6">
+    <div className="max-w-3xl mx-auto space-y-6 py-6">
       <div className="text-center space-y-3">
         <div className="inline-flex items-center justify-center p-4 bg-blue-100 text-[#1D61E7] rounded-3xl animate-pulse shadow-xs">
           <Activity className="w-9 h-9" />
@@ -33,7 +37,7 @@ export default function ProcessingPage() {
           Processing Multi-Modal Pipeline
         </h1>
         <p className="text-slate-500 font-medium text-sm">
-          Patient ID: <span className="font-mono font-bold text-slate-800">PAT-2026-8841</span>
+          Patient ID: <span className="font-mono font-bold text-slate-800">{patientId}</span>
         </p>
       </div>
 

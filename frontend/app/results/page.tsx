@@ -22,6 +22,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { fetchResults, ModCFrontendOutput, DeficiencyItem } from '@/lib/api';
+import { saveScanToSupabase } from '@/lib/supabase';
 
 export default function ResultsPage() {
   const [data, setData] = useState<ModCFrontendOutput | null>(null);
@@ -32,7 +33,19 @@ export default function ResultsPage() {
   });
 
   useEffect(() => {
-    fetchResults().then(setData);
+    fetchResults().then((res) => {
+      setData(res);
+      if (res && res.patient?.patient_id) {
+        saveScanToSupabase({
+          scan_id: `SCAN-${Date.now()}`,
+          patient_id: res.patient.patient_id,
+          overall_risk_band: res.summary?.overall_risk_band || 'moderate',
+          flagged_count: res.summary?.flagged_deficiency_count || 0,
+          mod_c_output: res,
+          deficiencies: res.deficiencies,
+        }).catch((e) => console.warn('Scan auto-save to Supabase failed:', e));
+      }
+    });
   }, []);
 
   const toggleExpand = (id: string) => {
@@ -83,11 +96,11 @@ export default function ResultsPage() {
               Uploaded Report
             </p>
             <p className="text-xs font-semibold text-slate-600 font-mono">
-              {data.uploaded_report.filename}
+              {data.uploaded_report?.filename || 'CBC_Blood_Report.pdf'}
             </p>
             <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              <span>{data.uploaded_report.uploaded_at}</span>
+              <span>{data.uploaded_report?.uploaded_at || 'Recently processed'}</span>
             </p>
           </div>
         </div>
@@ -204,7 +217,7 @@ export default function ResultsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                {data.blood_parameters.map((param, idx) => (
+                {(data.blood_parameters || []).map((param, idx) => (
                   <tr
                     key={idx}
                     className="hover:bg-slate-50/60 transition-colors"
@@ -246,19 +259,20 @@ export default function ResultsPage() {
         <div className="space-y-4">
           {/* Recommendation 1: Vitamin B12 */}
           {data.deficiencies.map((item) => {
-            const isB12 = item.id === 'b12';
-            const isVitD = item.id === 'vitamin_d';
-            const isIron = item.id === 'iron';
-            const isExpanded = expandedCards[item.id] ?? true;
+            const cardKey = item.id || item.type;
+            const isB12 = cardKey === 'b12';
+            const isVitD = cardKey === 'vitamin_d';
+            const isIron = cardKey === 'iron';
+            const isExpanded = expandedCards[cardKey] ?? true;
 
             return (
               <div
-                key={item.id}
+                key={cardKey}
                 className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden transition-all"
               >
                 {/* Accordion Header */}
                 <div
-                  onClick={() => toggleExpand(item.id)}
+                  onClick={() => toggleExpand(cardKey)}
                   className="p-6 cursor-pointer flex items-center justify-between hover:bg-slate-50/50 transition-colors"
                 >
                   <div className="flex items-center space-x-4">
@@ -315,7 +329,7 @@ export default function ResultsPage() {
                         <span>Foods</span>
                       </div>
                       <p className="text-slate-600 leading-relaxed font-medium">
-                        {item.recommendations.foods}
+                        {item.recommendations?.foods || item.diet_recommendations[0]?.suggestion || 'Increase consumption of nutrient-dense foods.'}
                       </p>
                     </div>
 
@@ -341,10 +355,10 @@ export default function ResultsPage() {
                       </div>
                       <p className="text-slate-600 leading-relaxed font-medium">
                         {isVitD
-                          ? item.recommendations.sunlight
+                          ? item.recommendations?.sunlight || 'Get 15-20 mins daily sunlight.'
                           : isIron
-                          ? item.recommendations.tips
-                          : item.recommendations.supplements}
+                          ? item.recommendations?.tips || item.diet_recommendations[1]?.suggestion || 'Pair with Vitamin C.'
+                          : item.recommendations?.supplements || item.diet_recommendations[1]?.suggestion || 'Consider oral supplementation if recommended.'}
                       </p>
                     </div>
 
@@ -370,10 +384,10 @@ export default function ResultsPage() {
                       </div>
                       <p className="text-slate-600 leading-relaxed font-medium">
                         {isB12
-                          ? item.recommendations.lifestyle
+                          ? item.recommendations?.lifestyle || 'Maintain balanced diet.'
                           : isVitD
-                          ? item.recommendations.supplements
-                          : item.recommendations.avoid}
+                          ? item.recommendations?.supplements || 'Vitamin D3 2000 IU daily.'
+                          : item.recommendations?.avoid || item.diet_recommendations[2]?.suggestion || 'Avoid tea/coffee immediately after meals.'}
                       </p>
                     </div>
                   </div>

@@ -1,20 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import {
   User,
   Info,
   MapPin,
   ShieldCheck,
-  Calendar,
   ChevronDown,
   ArrowRight,
-  CheckCircle2,
 } from 'lucide-react';
+import {
+  upsertPatientProfileToSupabase,
+  fetchPatientProfileFromSupabase,
+} from '@/lib/supabase';
 
 export default function PatientDetailsPage() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -34,16 +38,71 @@ export default function PatientDetailsPage() {
     country: 'India',
   });
 
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.fullName || user.firstName || '',
+        email: prev.email || user.primaryEmailAddress?.emailAddress || '',
+      }));
+
+      fetchPatientProfileFromSupabase(user.id).then((profile) => {
+        if (profile) {
+          setFormData((prev) => ({
+            ...prev,
+            fullName: profile.full_name || prev.fullName,
+            gender: profile.gender || prev.gender,
+          }));
+          if (profile.patient_id) {
+            localStorage.setItem('vitascan_patient_id', profile.patient_id);
+          }
+        }
+      });
+    }
+  }, [isLoaded, user]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const calculateAge = (dobString: string): number => {
+    if (!dobString) return 28;
+    const birthDate = new Date(dobString);
+    const difference = Date.now() - birthDate.getTime();
+    const ageDate = new Date(difference);
+    return Math.abs(ageDate.getUTCFullYear() - 1970) || 28;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Proceed to blood report upload
-    router.push('/upload');
+    setSaving(true);
+
+    try {
+      const patientId = user?.id
+        ? `PAT-${user.id.replace(/^user_/, '').slice(0, 8).toUpperCase()}`
+        : localStorage.getItem('vitascan_patient_id') || `PAT-${Date.now().toString().slice(-8)}`;
+
+      await upsertPatientProfileToSupabase({
+        clerk_user_id: user?.id,
+        patient_id: patientId,
+        full_name: formData.fullName,
+        age: calculateAge(formData.dob),
+        gender: formData.gender,
+      });
+
+      localStorage.setItem('vitascan_patient_id', patientId);
+    } catch (err) {
+      console.warn('Could not save patient profile to database, continuing locally', err);
+    } finally {
+      setSaving(false);
+      router.push('/upload');
+    }
   };
 
   return (
@@ -89,6 +148,7 @@ export default function PatientDetailsPage() {
                 onChange={handleChange}
                 placeholder="Enter full name"
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400"
+                required
               />
             </div>
 
@@ -378,9 +438,10 @@ export default function PatientDetailsPage() {
         <div className="flex justify-end pt-4">
           <button
             type="submit"
-            className="px-8 py-3.5 bg-[#1D61E7] hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center space-x-2 text-sm"
+            disabled={saving}
+            className="px-8 py-3.5 bg-[#1D61E7] hover:bg-blue-700 disabled:bg-slate-300 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all flex items-center space-x-2 text-sm"
           >
-            <span>Save and Continue</span>
+            <span>{saving ? 'Saving Profile...' : 'Save and Continue'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

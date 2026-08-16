@@ -28,7 +28,7 @@ export default function DeficiencyDetailPage() {
       setData(res);
       const found = res.deficiencies.find(
         (d) =>
-          d.id.toLowerCase() === deficiencyType.toLowerCase() ||
+          d.id?.toLowerCase() === deficiencyType.toLowerCase() ||
           d.type.toLowerCase() === deficiencyType.toLowerCase()
       );
       if (found) {
@@ -67,7 +67,7 @@ export default function DeficiencyDetailPage() {
               Biomarker Clinical Analysis
             </span>
             <h1 className="text-3xl font-extrabold text-slate-900 capitalize">
-              {detail.title} Deficiency Detail
+              {detail.title || detail.type} Deficiency Detail
             </h1>
           </div>
 

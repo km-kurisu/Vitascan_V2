@@ -15,19 +15,30 @@ import {
   ArrowRight,
   CheckCircle,
 } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
 import { uploadBloodReport, uploadSymptomPhoto } from '@/lib/api';
 
 export default function Home() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
 
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [symptomFile, setSymptomFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const getActivePatientId = () => {
+    if (typeof window !== 'undefined' && localStorage.getItem('vitascan_patient_id')) {
+      return localStorage.getItem('vitascan_patient_id')!;
+    }
+    return user?.id
+      ? `PAT-${user.id.replace(/^user_/, '').slice(0, 8).toUpperCase()}`
+      : 'PAT-DEFAULT';
+  };
+
   const handleReportUpload = async (file: File) => {
     setLoading(true);
     try {
-      await uploadBloodReport(file, 'PAT-2026-8841');
+      await uploadBloodReport(file, getActivePatientId());
       router.push('/results');
     } catch (e) {
       // Fallback redirect to results demo
@@ -40,7 +51,7 @@ export default function Home() {
   const handleSymptomUpload = async (file: File) => {
     setLoading(true);
     try {
-      await uploadSymptomPhoto(file, 'PAT-2026-8841');
+      await uploadSymptomPhoto(file, getActivePatientId());
       router.push('/results');
     } catch (e) {
       router.push('/results');
@@ -49,12 +60,14 @@ export default function Home() {
     }
   };
 
+  const greetingName = isLoaded && user?.firstName ? user.firstName : null;
+
   return (
     <div className="space-y-16 py-4 max-w-6xl mx-auto">
       {/* Top Greeting Section */}
       <div className="bg-gradient-to-r from-blue-50/50 via-slate-50 to-indigo-50/40 p-8 rounded-3xl border border-slate-200/60 shadow-xs space-y-2">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-          <span>Welcome back, Ayush!</span>
+          <span>{greetingName ? `Welcome back, ${greetingName}!` : 'Welcome to VitaScan!'}</span>
           <span className="text-3xl animate-bounce">👋</span>
         </h1>
         <p className="text-slate-600 font-medium text-base">

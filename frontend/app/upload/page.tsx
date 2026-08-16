@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import {
   FileText,
   Camera,
@@ -15,13 +16,27 @@ import { uploadBloodReport, uploadSymptomPhoto } from '@/lib/api';
 
 export default function UploadPage() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
 
-  const [patientId, setPatientId] = useState('PAT-2026-8841');
+  const [patientId, setPatientId] = useState('');
   const [reportFile, setReportFile] = useState<File | null>(null);
   const [symptomFile, setSymptomFile] = useState<File | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedId = typeof window !== 'undefined' ? localStorage.getItem('vitascan_patient_id') : null;
+    if (storedId) {
+      setPatientId(storedId);
+    } else if (isLoaded && user?.id) {
+      const derivedId = `PAT-${user.id.replace(/^user_/, '').slice(0, 8).toUpperCase()}`;
+      setPatientId(derivedId);
+      localStorage.setItem('vitascan_patient_id', derivedId);
+    } else if (!patientId) {
+      setPatientId('PAT-ANONYMOUS');
+    }
+  }, [isLoaded, user]);
 
   const handleReportChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -45,10 +60,12 @@ export default function UploadPage() {
     setLoading(true);
     setError(null);
 
+    const activeId = patientId || 'PAT-ANONYMOUS';
+
     try {
-      await uploadBloodReport(reportFile, patientId);
+      await uploadBloodReport(reportFile, activeId);
       if (symptomFile) {
-        await uploadSymptomPhoto(symptomFile, patientId);
+        await uploadSymptomPhoto(symptomFile, activeId);
       }
       router.push('/processing');
     } catch (err: any) {
@@ -87,7 +104,12 @@ export default function UploadPage() {
           <input
             type="text"
             value={patientId}
-            onChange={(e) => setPatientId(e.target.value)}
+            onChange={(e) => {
+              setPatientId(e.target.value);
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('vitascan_patient_id', e.target.value);
+              }
+            }}
             className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 text-slate-900 font-mono text-sm outline-none"
             required
           />

@@ -4,14 +4,26 @@ Coordinates Path B (Blood Report Pipeline) and optional Path A (Symptom Photo Pi
 into Mod C (Explainer + Formatter), and serves endpoints for the Next.js frontend.
 """
 import os
+import sys
 import uvicorn
 import logging
 from typing import Dict, Any, Optional
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 
+# Ensure workspace root is in sys.path so 'backend.*' imports resolve regardless of cwd
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+import time
+from dotenv import load_dotenv
+
+# Load environment variables from .env.local / .env
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env.local"))
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
 from backend.shared.schemas import ModCFrontendOutput
 from backend.shared.mock_data import generate_mock_frontend_output
+from backend.shared.supabase_client import save_patient_record, save_scan_result
 from backend.path_b_blood_report.mod_b1_extractor.extractor import BloodReportExtractor
 from backend.path_b_blood_report.mod_b2_normalizer.normalizer import BiomarkerNormalizer
 from backend.path_b_blood_report.mod_b3_grader.grader import PathBGrader
@@ -126,11 +138,23 @@ async def upload_blood_report(
         )
 
         pipeline_state["status"] = "completed"
-        pipeline_state["latest_result"] = final_output.model_dump()
+        pipeline_output_dict = final_output.model_dump()
+        pipeline_state["latest_result"] = pipeline_output_dict
+
+        # Save patient profile and scan run to Supabase
+        scan_id = f"SCAN-{patient_id}-{int(time.time())}"
+        save_patient_record(patient_id=patient_id)
+        save_scan_result(
+            scan_id=scan_id,
+            patient_id=patient_id,
+            mod_c_output=pipeline_output_dict,
+            blood_report_url=filename,
+        )
 
         return {
             "message": "Blood report processed successfully",
             "patient_id": patient_id,
+            "scan_id": scan_id,
             "deficiencies_found": len(final_output.deficiencies)
         }
 
@@ -165,7 +189,7 @@ async def upload_symptom_photo(
         pipeline_state["modules"]["mod_a3_crosscheck"] = {"status": "completed", "progress": 100}
         mod_a3_output = a3_crosscheck.generate_signal(cnn_result, patient_id=patient_id)
 
-        # If latest_result exists, update crosscheck info
+        # If latest_result exists, update crosscheck info and save to Supabase
         if pipeline_state["latest_result"]:
             current_data = pipeline_state["latest_result"]
             for def_item in current_data.get("deficiencies", []):
@@ -177,6 +201,14 @@ async def upload_symptom_photo(
                         "agrees": sig.agrees_with_path_b,
                         "source": sig.source
                     }
+
+            scan_id = f"SCAN-{patient_id}-{int(time.time())}"
+            save_scan_result(
+                scan_id=scan_id,
+                patient_id=patient_id,
+                mod_c_output=current_data,
+                symptom_photo_url=filename,
+            )
 
         return {
             "message": "Symptom photo processed and cross-checked successfully",
