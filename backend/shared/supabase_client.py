@@ -55,6 +55,30 @@ def save_patient_record(patient_id: str, full_name: Optional[str] = None, age: O
         return False
 
 
+def save_patient_biomarkers(patient_id: str, biomarkers_data: Dict[str, Any]) -> bool:
+    """Saves BioBERT extracted biomarkers for a patient in database record with logging."""
+    logger.info(f"Saving BioBERT patient biomarkers for patient '{patient_id}'...")
+    client = get_supabase_client()
+    if not client:
+        logger.debug(f"[Mock Supabase] Saved BioBERT biomarkers for patient: {patient_id}")
+        return True
+
+    try:
+        data = {
+            "patient_id": patient_id,
+            "biomarkers": biomarkers_data.get("biomarkers", {}),
+            "model": biomarkers_data.get("model", "biobert-v1.1"),
+            "confidence_summary": biomarkers_data.get("confidence_summary", 0.0),
+            "updated_at": "now()"
+        }
+        res = client.table("patient_biomarkers").upsert(data, on_conflict="patient_id").execute()
+        logger.info(f"Successfully saved BioBERT patient biomarkers to Supabase database for patient '{patient_id}'.")
+        return bool(res.data)
+    except Exception as e:
+        logger.error(f"Supabase save_patient_biomarkers error for patient '{patient_id}': {e}")
+        return False
+
+
 def save_scan_result(scan_id: str, patient_id: str, mod_c_output: Dict[str, Any], blood_report_url: Optional[str] = None, symptom_photo_url: Optional[str] = None) -> bool:
     """Saves scan result summary and deficiency breakdowns in Supabase."""
     client = get_supabase_client()

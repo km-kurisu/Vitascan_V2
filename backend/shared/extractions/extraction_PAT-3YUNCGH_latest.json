@@ -1,0 +1,25 @@
+{
+  "patient_id": "PAT-3YUNCGH",
+  "age": null,
+  "gender": null,
+  "patient_details": {
+    "patient_id": "PAT-3YUNCGH",
+    "name": null,
+    "age": null,
+    "gender": null,
+    "date": null,
+    "lab_id": "PAT-3YUNCGH",
+    "referred_by": null
+  },
+  "labs": {},
+  "biomarkers": {},
+  "parse_confidence": 0.85,
+  "source_mix": "regex_only",
+  "filename": "CBC Repot.jpg",
+  "timestamp": "2026-08-19T16:01:26Z",
+  "unix_timestamp": 1787155286,
+  "extraction_method": "Failed Tesseract",
+  "char_count": 114,
+  "raw_text": "# OCR Extraction error: tesseract is not installed or it's not in your PATH. See README file for more information.",
+  "metadata": {}
+}

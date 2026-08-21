@@ -1,0 +1,231 @@
+{
+  "patient_id": "PAT-3WER",
+  "age": "60",
+  "gender": null,
+  "patient_details": {
+    "patient_id": "PAT-3WER",
+    "name": null,
+    "age": "60",
+    "gender": null,
+    "date": null,
+    "lab_id": "PAT-3WER",
+    "referred_by": "Dr. JANAKRAM MAURYA Mobile No"
+  },
+  "timestamp": "2026-08-19T16:14:04Z",
+  "unix_timestamp": 1787156044,
+  "model": "Ihor/gliner-biomed-small-v1.0",
+  "labs": {
+    "Platelet Count": {
+      "value": "2.59",
+      "unit": "Lakh/cmm"
+    },
+    "Rbc Count": {
+      "value": "4.0",
+      "unit": "Millions/emm"
+    },
+    "Mean Corpuscular Volume (MCV)": {
+      "value": "85.89",
+      "unit": "fi"
+    },
+    "Lymphocyte": {
+      "value": "24.0",
+      "unit": "%"
+    },
+    "Gender": {
+      "value": "Sex",
+      "unit": ""
+    },
+    "Haemoglobin (Hb)": {
+      "value": "11.6",
+      "unit": "mdi"
+    },
+    "Basophil": {
+      "value": "0.0",
+      "unit": "%"
+    },
+    "Age": {
+      "value": "60Yrs",
+      "unit": ""
+    },
+    "Eosinophil": {
+      "value": "4.0",
+      "unit": "%"
+    },
+    "Mean Corpuscular Hemoglobin Concentration (MCHC)": {
+      "value": "32.9",
+      "unit": "gm/di"
+    },
+    "Mean Corpuscular Hemoglobin (MCH)": {
+      "value": "28.0",
+      "unit": "pg"
+    },
+    "Neutrophil": {
+      "value": "67.0",
+      "unit": "%"
+    },
+    "Mch 28": {
+      "value": "22.0",
+      "unit": "Picogram"
+    },
+    "Monocyte": {
+      "value": "5.0",
+      "unit": "%"
+    }
+  },
+  "biomarkers_count": 15,
+  "biomarkers": {
+    "platelet_count": {
+      "canonical_name": "Platelet Count",
+      "value": 2.59,
+      "raw_value": 2.59,
+      "unit": "Lakh/cmm",
+      "ref_range": ". 1.50 - 4.50",
+      "confidence": 0.9,
+      "source_span": "PLATELET COUNT 2.59 Lakh/cmm. 1.50 - 4.50",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "rbc_count": {
+      "canonical_name": "Rbc Count",
+      "value": 4.0,
+      "raw_value": 4.0,
+      "unit": "Millions/emm",
+      "ref_range": "38-48",
+      "confidence": 0.9,
+      "source_span": "RBC COUNT 4. Millions/emm 38-48",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "mcv": {
+      "canonical_name": "Mean Corpuscular Volume (MCV)",
+      "value": 85.89,
+      "raw_value": 85.89,
+      "unit": "fi",
+      "ref_range": "80.0 - 100.0",
+      "confidence": 0.95,
+      "source_span": "MCV 85.89 fi",
+      "entity_type": "BIOMARKER_ENTITY"
+    },
+    "lymphocyte": {
+      "canonical_name": "Lymphocyte",
+      "value": 24.0,
+      "raw_value": 24.0,
+      "unit": "%",
+      "ref_range": "20-45",
+      "confidence": 0.9,
+      "source_span": "LYMPHOCYTE 24 % 20-45",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "gender": {
+      "canonical_name": "Gender",
+      "raw_value": "Sex",
+      "value": "Sex",
+      "unit": "",
+      "confidence": 0.6,
+      "source": "gliner",
+      "source_span": "Sex",
+      "entity_type": "GLINER_BIOMEDICAL_ENTITY"
+    },
+    "haemoglobin_hb": {
+      "canonical_name": "Haemoglobin (Hb)",
+      "value": 11.6,
+      "raw_value": 11.6,
+      "unit": "mdi",
+      "ref_range": "11.5 -16.5",
+      "confidence": 0.9,
+      "source_span": "HAEMOGLOBIN (Hb) 11.6 mdi 11.5 -16.5",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "basophil": {
+      "canonical_name": "Basophil",
+      "value": 0.0,
+      "raw_value": 0.0,
+      "unit": "%",
+      "ref_range": "0-0",
+      "confidence": 0.9,
+      "source_span": "BASOPHIL 00 % 0-0",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "age": {
+      "canonical_name": "Age",
+      "raw_value": "60Yrs",
+      "value": "60Yrs",
+      "unit": "",
+      "confidence": 0.83,
+      "source": "gliner",
+      "source_span": "60Yrs",
+      "entity_type": "GLINER_BIOMEDICAL_ENTITY"
+    },
+    "eosinophil": {
+      "canonical_name": "Eosinophil",
+      "value": 4.0,
+      "raw_value": 4.0,
+      "unit": "%",
+      "ref_range": "01 - 06",
+      "confidence": 0.9,
+      "source_span": "EOSINOPHIL 04 % 01 - 06",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "mchc": {
+      "canonical_name": "Mean Corpuscular Hemoglobin Concentration (MCHC)",
+      "value": 32.9,
+      "raw_value": 32.9,
+      "unit": "gm/di",
+      "ref_range": "32.0 - 36.0",
+      "confidence": 0.95,
+      "source_span": "MCHC 32.9 gm/di",
+      "entity_type": "BIOMARKER_ENTITY"
+    },
+    "mch": {
+      "canonical_name": "Mean Corpuscular Hemoglobin (MCH)",
+      "value": 28.0,
+      "raw_value": 28.0,
+      "unit": "pg",
+      "ref_range": "27.0 - 33.0",
+      "confidence": 0.95,
+      "source_span": "MCH 28",
+      "entity_type": "BIOMARKER_ENTITY"
+    },
+    "neutrophil": {
+      "canonical_name": "Neutrophil",
+      "value": 67.0,
+      "raw_value": 67.0,
+      "unit": "%",
+      "ref_range": "40-75",
+      "confidence": 0.9,
+      "source_span": "NEUTROPHIL 67 % 40-75",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "mch_28": {
+      "canonical_name": "Mch 28",
+      "value": 22.0,
+      "raw_value": 22.0,
+      "unit": "Picogram",
+      "ref_range": "27.0 - 31.0",
+      "confidence": 0.9,
+      "source_span": "MCH 28:22 Picogram 27.0 - 31.0",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "monocyte": {
+      "canonical_name": "Monocyte",
+      "value": 5.0,
+      "raw_value": 5.0,
+      "unit": "%",
+      "ref_range": "02-10",
+      "confidence": 0.9,
+      "source_span": "MONOCYTE 05 % 02-10",
+      "entity_type": "GENERIC_BIOMARKER_ENTITY"
+    },
+    "platelets": {
+      "canonical_name": "Platelet Count",
+      "value": 2.59,
+      "raw_value": 2.59,
+      "unit": "Lakh/cmm",
+      "ref_range": "150000 - 450000",
+      "confidence": 0.95,
+      "source_span": "PLATELET COUNT 2.59 Lakh/cmm",
+      "entity_type": "BIOMARKER_ENTITY"
+    }
+  },
+  "confidence_summary": 0.89,
+  "parse_confidence": 0.89,
+  "source_mix": "hybrid"
+}

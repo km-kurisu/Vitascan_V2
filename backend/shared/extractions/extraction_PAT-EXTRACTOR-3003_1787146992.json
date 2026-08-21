@@ -1,0 +1,10 @@
+{
+  "patient_id": "PAT-EXTRACTOR-3003",
+  "filename": "test_report.txt",
+  "timestamp": "2026-08-19T13:43:12Z",
+  "unix_timestamp": 1787146992,
+  "extraction_method": "utf-8 plain text",
+  "char_count": 72,
+  "raw_text": "Serum Ferritin: 11.2 ng/mL\nHemoglobin: 10.4 g/dL\nVitamin B12: 210 pg/mL\n",
+  "metadata": {}
+}

@@ -1,0 +1,74 @@
+{
+  "patient_id": "REPORT",
+  "age": "42",
+  "gender": "Male",
+  "patient_details": {
+    "patient_id": "PAT-UNKNOWN",
+    "name": "Mark Taylor",
+    "age": "42",
+    "gender": "Male",
+    "date": null,
+    "lab_id": null,
+    "referred_by": null
+  },
+  "labs": {
+    "Serum Creatinine": {
+      "value": "0.79",
+      "unit": "mg/dL",
+      "ref_range": "N/A"
+    },
+    "Glycosylated Hemoglobin (Hba1C)": {
+      "value": "6.0",
+      "unit": "%",
+      "ref_range": "N/A"
+    },
+    "Glucose - Fasting": {
+      "value": "101.0",
+      "unit": "mg/dL",
+      "ref_range": "N/A"
+    }
+  },
+  "biomarkers": {
+    "creatinine": {
+      "canonical_name": "Serum Creatinine",
+      "value": 0.79,
+      "raw_value": 0.79,
+      "unit": "mg/dL",
+      "ref_range": "0.5 - 1.2",
+      "source_span": "Creatinine: 0.79 mg/dL"
+    },
+    "glycosylated_hemoglobin_hba1c": {
+      "canonical_name": "Glycosylated Hemoglobin (Hba1C)",
+      "value": 6.0,
+      "raw_value": 6.0,
+      "unit": "%",
+      "ref_range": "N/A",
+      "source_span": "Glycosylated Hemoglobin (HbA1c): 6.0 %"
+    },
+    "glucose_fasting": {
+      "canonical_name": "Glucose - Fasting",
+      "value": 101.0,
+      "raw_value": 101.0,
+      "unit": "mg/dL",
+      "ref_range": "N/A",
+      "source_span": "Glucose - Fasting: 101 mg/dL"
+    },
+    "serum_creatinine": {
+      "canonical_name": "Serum Creatinine",
+      "value": 0.79,
+      "raw_value": 0.79,
+      "unit": "mg/dL",
+      "ref_range": "N/A",
+      "source_span": "Serum Creatinine: 0.79 mg/dL"
+    }
+  },
+  "parse_confidence": 0.95,
+  "source_mix": "regex_only",
+  "filename": "test_report.txt",
+  "timestamp": "2026-08-19T14:19:06Z",
+  "unix_timestamp": 1787149146,
+  "extraction_method": "utf-8 plain text",
+  "char_count": 166,
+  "raw_text": "PATIENT REPORT\r\nPatient Name: Mark Taylor\r\nAge: 42\r\nGender: Male\r\nGlycosylated Hemoglobin (HbA1c): 6.0 %\r\nGlucose - Fasting: 101 mg/dL\r\nSerum Creatinine: 0.79 mg/dL\r\n",
+  "metadata": {}
+}
