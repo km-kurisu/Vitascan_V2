@@ -1,0 +1,191 @@
+{
+  "patient_id": "PAT-3WER",
+  "age": "60",
+  "gender": null,
+  "patient_details": {
+    "patient_id": "PAT-3WER",
+    "name": null,
+    "age": "60",
+    "gender": null,
+    "date": null,
+    "lab_id": "PAT-3WER",
+    "referred_by": "Dr. JANAKRAM MAURYA Mobile No"
+  },
+  "labs": {
+    "Platelet Count": {
+      "value": "2.59",
+      "unit": "Lakh/cmm",
+      "ref_range": ". 1.50 - 4.50"
+    },
+    "Mean Corpuscular Volume (MCV)": {
+      "value": "85.89",
+      "unit": "fi",
+      "ref_range": "80.0 - 100.0"
+    },
+    "Mean Corpuscular Hemoglobin (MCH)": {
+      "value": "28.0",
+      "unit": "pg",
+      "ref_range": "27.0 - 33.0"
+    },
+    "Mean Corpuscular Hemoglobin Concentration (MCHC)": {
+      "value": "32.9",
+      "unit": "gm/di",
+      "ref_range": "32.0 - 36.0"
+    },
+    "Haemoglobin (Hb)": {
+      "value": "11.6",
+      "unit": "mdi",
+      "ref_range": "11.5 -16.5"
+    },
+    "Neutrophil": {
+      "value": "67.0",
+      "unit": "%",
+      "ref_range": "40-75"
+    },
+    "Lymphocyte": {
+      "value": "24.0",
+      "unit": "%",
+      "ref_range": "20-45"
+    },
+    "Eosinophil": {
+      "value": "4.0",
+      "unit": "%",
+      "ref_range": "01 - 06"
+    },
+    "Monocyte": {
+      "value": "5.0",
+      "unit": "%",
+      "ref_range": "02-10"
+    },
+    "Basophil": {
+      "value": "0.0",
+      "unit": "%",
+      "ref_range": "0-0"
+    },
+    "Rbc Count": {
+      "value": "4.0",
+      "unit": "Millions/emm",
+      "ref_range": "38-48"
+    },
+    "Mch 28": {
+      "value": "22.0",
+      "unit": "Picogram",
+      "ref_range": "27.0 - 31.0"
+    }
+  },
+  "biomarkers": {
+    "platelets": {
+      "canonical_name": "Platelet Count",
+      "value": 2.59,
+      "raw_value": 2.59,
+      "unit": "Lakh/cmm",
+      "ref_range": "150000 - 450000",
+      "source_span": "PLATELET COUNT 2.59 Lakh/cmm"
+    },
+    "mcv": {
+      "canonical_name": "Mean Corpuscular Volume (MCV)",
+      "value": 85.89,
+      "raw_value": 85.89,
+      "unit": "fi",
+      "ref_range": "80.0 - 100.0",
+      "source_span": "MCV 85.89 fi"
+    },
+    "mch": {
+      "canonical_name": "Mean Corpuscular Hemoglobin (MCH)",
+      "value": 28.0,
+      "raw_value": 28.0,
+      "unit": "pg",
+      "ref_range": "27.0 - 33.0",
+      "source_span": "MCH 28"
+    },
+    "mchc": {
+      "canonical_name": "Mean Corpuscular Hemoglobin Concentration (MCHC)",
+      "value": 32.9,
+      "raw_value": 32.9,
+      "unit": "gm/di",
+      "ref_range": "32.0 - 36.0",
+      "source_span": "MCHC 32.9 gm/di"
+    },
+    "haemoglobin_hb": {
+      "canonical_name": "Haemoglobin (Hb)",
+      "value": 11.6,
+      "raw_value": 11.6,
+      "unit": "mdi",
+      "ref_range": "11.5 -16.5",
+      "source_span": "HAEMOGLOBIN (Hb) 11.6 mdi 11.5 -16.5"
+    },
+    "neutrophil": {
+      "canonical_name": "Neutrophil",
+      "value": 67.0,
+      "raw_value": 67.0,
+      "unit": "%",
+      "ref_range": "40-75",
+      "source_span": "NEUTROPHIL 67 % 40-75"
+    },
+    "lymphocyte": {
+      "canonical_name": "Lymphocyte",
+      "value": 24.0,
+      "raw_value": 24.0,
+      "unit": "%",
+      "ref_range": "20-45",
+      "source_span": "LYMPHOCYTE 24 % 20-45"
+    },
+    "eosinophil": {
+      "canonical_name": "Eosinophil",
+      "value": 4.0,
+      "raw_value": 4.0,
+      "unit": "%",
+      "ref_range": "01 - 06",
+      "source_span": "EOSINOPHIL 04 % 01 - 06"
+    },
+    "monocyte": {
+      "canonical_name": "Monocyte",
+      "value": 5.0,
+      "raw_value": 5.0,
+      "unit": "%",
+      "ref_range": "02-10",
+      "source_span": "MONOCYTE 05 % 02-10"
+    },
+    "basophil": {
+      "canonical_name": "Basophil",
+      "value": 0.0,
+      "raw_value": 0.0,
+      "unit": "%",
+      "ref_range": "0-0",
+      "source_span": "BASOPHIL 00 % 0-0"
+    },
+    "rbc_count": {
+      "canonical_name": "Rbc Count",
+      "value": 4.0,
+      "raw_value": 4.0,
+      "unit": "Millions/emm",
+      "ref_range": "38-48",
+      "source_span": "RBC COUNT 4. Millions/emm 38-48"
+    },
+    "mch_28": {
+      "canonical_name": "Mch 28",
+      "value": 22.0,
+      "raw_value": 22.0,
+      "unit": "Picogram",
+      "ref_range": "27.0 - 31.0",
+      "source_span": "MCH 28:22 Picogram 27.0 - 31.0"
+    },
+    "platelet_count": {
+      "canonical_name": "Platelet Count",
+      "value": 2.59,
+      "raw_value": 2.59,
+      "unit": "Lakh/cmm",
+      "ref_range": ". 1.50 - 4.50",
+      "source_span": "PLATELET COUNT 2.59 Lakh/cmm. 1.50 - 4.50"
+    }
+  },
+  "parse_confidence": 0.95,
+  "source_mix": "regex_only",
+  "filename": "CBC Repot.jpg",
+  "timestamp": "2026-08-19T16:14:03Z",
+  "unix_timestamp": 1787156043,
+  "extraction_method": "Tesseract Image OCR (Preprocessed)",
+  "char_count": 948,
+  "raw_text": "=, a\n-_ . a\nan Patho ogy Lab Ramesh Maurya\naie DMLT, (Reg 10055)\n(A RELIABLE DIAG Ex. Lab Technician\nA CO M PUTERIZED PATHOLOGY LAB Vansh Path Lab (Om Hospital, Noida U.P}\nSSS | ‘\nDate 2211212020 Sri No. 266 Patient Id 2012220266)\nName Mrs. KALIMUN NISHA Age 60Yrs. Sex F\nRef.By Dr. JANAKRAM MAURYA Mobile No. .\nTest Name Value Unit Normal Value\nCOMPLETE BLOOD COUNT (CBC)\nHAEMOGLOBIN (Hb) 11.6 mdi 11.5 -16.5\nTOTAL LEUCOCYTE COUNT (TLC) 7,800 Icumm 4000 - 11000\nDIFFERENTIAL LEUCOCYTE COUNT (DLC)\nNEUTROPHIL 67 % 40-75\nLYMPHOCYTE 24 % 20-45\nEOSINOPHIL 04 % 01 - 06\nMONOCYTE 05 % 02-10\nBASOPHIL 00 % 0-0\nRBC COUNT 4. Millions/emm 38-48\nP.C.V/ HAEMATOCRIT 35.3 % 35-45\nMCV 85.89 fi. 80 - 100\nMCH 28:22 Picogram 27.0 - 31.0\nMCHC 32.9 gm/di 33-37\nPLATELET COUNT 2.59 Lakh/cmm. 1.50 - 4.50\none End Of Report one\nRAMESH K [AURYA\nS. Lab Technichiri (DMLT)\nDi ANT (Reg. NO. 10055)\n7 Page 1 of 1\ndia, Mannijot Chowk, Bhanwapur Road, Siddharth Nagar (U.P.)\n",
+  "metadata": {}
+}

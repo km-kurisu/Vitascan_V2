@@ -25,36 +25,73 @@ class BiomarkerNormalizer:
     def normalize_text(self, raw_text: str, gender: str = "Female") -> Dict[str, Any]:
         """
         Parses text for key biomarkers and outputs normalized values and deviation scores.
+        Supports both single-line and multiline layout table extractions.
         Deviation score: < 0 indicates below reference min, > 0 indicates above reference max.
         """
         parsed_results: Dict[str, Dict[str, Any]] = {}
-        lines = raw_text.split("\n")
+        lines = [l.strip() for l in raw_text.split("\n") if l.strip()]
+        full_text = "\n".join(lines)
 
         for key, info in self.db.items():
             aliases = info["aliases"]
-            pattern = r"(?i)(" + "|".join(re.escape(a) for a in aliases) + r")[\s:=|-]+([\d.]+)\s*([a-zA-Z/%]*)"
-            
-            match = None
-            for line in lines:
-                m = re.search(pattern, line)
-                if m:
-                    match = m
-                    break
-            
-            if match:
-                raw_val = float(match.group(2))
-                unit = match.group(3).strip().lower() or info["standard_unit"].lower()
-                
-                # Apply unit conversion if known
-                conversion_factor = info.get("unit_conversions", {}).get(unit, 1.0)
-                norm_val = raw_val * conversion_factor
+            val_found = None
+            unit_found = None
 
-                # Reference range selection
+            # 1. Single-line pattern match (e.g. "Hemoglobin: 14.5 g/dL")
+            for alias in aliases:
+                pattern = r"(?i)\b" + re.escape(alias) + r"\b[\s:=|-]+([<>]?\s*[\d.]+)\s*([a-zA-Z/%]*)"
+                m = re.search(pattern, full_text)
+                if m:
+                    try:
+                        val_found = float(m.group(1).replace("<", "").replace(">", "").strip())
+                        unit_found = m.group(2).strip() or info["standard_unit"]
+                        break
+                    except ValueError:
+                        pass
+
+            # 2. Multiline table block match (e.g., PyMuPDF layout Extractions)
+            if val_found is None:
+                for idx, line in enumerate(lines):
+                    alias_match = False
+                    for alias in aliases:
+                        if re.search(r"(?i)\b" + re.escape(alias) + r"\b", line):
+                            if len(line) < 60:
+                                alias_match = True
+                                break
+
+                    if alias_match:
+                        block = lines[idx + 1: min(idx + 13, len(lines))]
+                        block_nums = []
+                        for bline in block:
+                            if any(stop in bline.lower() for stop in ["patient", "doctor", "report", "page", "lab id", "status", "sample information"]):
+                                break
+                            if "-" in bline and re.search(r"\d+\s*-\s*\d+", bline):
+                                continue
+                            if re.search(r":\s*<\d+|:\s*>\d+", bline):
+                                continue
+                            m_val = re.search(r"(?:[<>]\s*)?(\b\d+(?:\.\d+)?\b)", bline)
+                            if m_val:
+                                try:
+                                    v = float(m_val.group(1))
+                                    if v not in (0.0, 3.0, 600.0, 6.0, 19.0, 2023.0, 2026.0):
+                                        block_nums.append(v)
+                                except ValueError:
+                                    pass
+
+                        if block_nums:
+                            val_found = block_nums[0]
+                            unit_found = info["standard_unit"]
+                            break
+
+            if val_found is not None:
+                unit = (unit_found or info["standard_unit"]).lower()
+                conversion_factor = info.get("unit_conversions", {}).get(unit, 1.0)
+                norm_val = val_found * conversion_factor
+
                 ref_range = info.get(f"ref_range_{gender.lower()}", info.get("ref_range_female"))
                 ref_min = ref_range["min"]
                 ref_max = ref_range["max"]
 
-                # Calculate deviation score normalized [-1.0 to 1.0]
                 if norm_val < ref_min:
                     deviation = -1.0 * (ref_min - norm_val) / ref_min
                 elif norm_val > ref_max:
@@ -64,7 +101,7 @@ class BiomarkerNormalizer:
 
                 parsed_results[key] = {
                     "canonical_name": info["canonical_name"],
-                    "raw_value": raw_val,
+                    "raw_value": val_found,
                     "value": round(norm_val, 2),
                     "unit": info["standard_unit"],
                     "ref_min": ref_min,

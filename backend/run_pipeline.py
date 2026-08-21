@@ -23,8 +23,9 @@ load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from backend.shared.schemas import ModCFrontendOutput
 from backend.shared.mock_data import generate_mock_frontend_output
-from backend.shared.supabase_client import save_patient_record, save_scan_result
+from backend.shared.supabase_client import save_patient_record, save_scan_result, save_patient_biomarkers
 from backend.path_b_blood_report.mod_b1_extractor.extractor import BloodReportExtractor
+from backend.path_b_blood_report.mod_b1_extractor.biobert_extractor import BioBERTBiomarkerExtractor
 from backend.path_b_blood_report.mod_b2_normalizer.normalizer import BiomarkerNormalizer
 from backend.path_b_blood_report.mod_b3_grader.grader import PathBGrader
 from backend.path_a_symptom_image.mod_a1_preprocess.preprocess import ImagePreprocessor
@@ -52,6 +53,7 @@ app.add_middleware(
 
 # Pipeline Module Instances
 extractor = BloodReportExtractor()
+biobert_extractor = BioBERTBiomarkerExtractor()
 normalizer = BiomarkerNormalizer()
 b3_grader = PathBGrader()
 
@@ -114,10 +116,23 @@ async def upload_blood_report(
         content = await file.read()
         filename = file.filename or "uploaded_report.pdf"
 
-        # Mod B1: Extraction
+        # Mod B1: OCR Extraction & Shared Storage Save
         pipeline_state["modules"]["mod_b1_extractor"] = {"status": "completed", "progress": 100}
-        extracted_data = extractor.extract_from_bytes(content, filename)
+        extracted_data = extractor.extract_from_bytes(
+            file_bytes=content,
+            filename=filename,
+            patient_id=patient_id,
+            save_json=True
+        )
         raw_text = extracted_data.get("raw_text", "")
+        extracted_json_path = extracted_data.get("json_storage_path", "")
+
+        # BioBERT Biomarker Extraction & Per-Patient Storage
+        logger.info(f"Triggering BioBERT biomarker extraction for Patient ID: {patient_id}")
+        biobert_biomarkers = biobert_extractor.extract_and_save_biomarkers(
+            raw_text=raw_text,
+            patient_id=patient_id
+        )
 
         # Mod B2: Normalization
         pipeline_state["modules"]["mod_b2_normalizer"] = {"status": "completed", "progress": 100}
@@ -141,9 +156,10 @@ async def upload_blood_report(
         pipeline_output_dict = final_output.model_dump()
         pipeline_state["latest_result"] = pipeline_output_dict
 
-        # Save patient profile and scan run to Supabase
+        # Save patient profile, BioBERT biomarkers, and scan run to database/storage
         scan_id = f"SCAN-{patient_id}-{int(time.time())}"
         save_patient_record(patient_id=patient_id)
+        save_patient_biomarkers(patient_id=patient_id, biomarkers_data=biobert_biomarkers)
         save_scan_result(
             scan_id=scan_id,
             patient_id=patient_id,
@@ -152,9 +168,11 @@ async def upload_blood_report(
         )
 
         return {
-            "message": "Blood report processed successfully",
+            "message": "Blood report processed successfully with OCR logging, JSON shared storage, and BioBERT biomarker extraction",
             "patient_id": patient_id,
             "scan_id": scan_id,
+            "extracted_json_path": extracted_json_path,
+            "biobert_biomarkers_count": biobert_biomarkers.get("biomarkers_count", len(biobert_biomarkers.get("biomarkers", {}))),
             "deficiencies_found": len(final_output.deficiencies)
         }
 

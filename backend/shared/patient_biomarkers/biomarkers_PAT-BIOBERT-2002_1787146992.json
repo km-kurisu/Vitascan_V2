@@ -1,0 +1,50 @@
+{
+  "patient_id": "PAT-BIOBERT-2002",
+  "timestamp": "2026-08-19T13:43:12Z",
+  "unix_timestamp": 1787146992,
+  "model": "biobert-v1.1-ner",
+  "biomarkers_count": 4,
+  "biomarkers": {
+    "ferritin": {
+      "canonical_name": "Serum Ferritin",
+      "value": 11.2,
+      "raw_value": 11.2,
+      "unit": "ng/mL",
+      "ref_range": "13.0 - 150.0",
+      "confidence": 0.95,
+      "source_span": "Ferritin: 11.2 ng/mL",
+      "entity_type": "BIOMARKER_ENTITY"
+    },
+    "hemoglobin": {
+      "canonical_name": "Hemoglobin",
+      "value": 10.4,
+      "raw_value": 10.4,
+      "unit": "g/dL",
+      "ref_range": "12.0 - 15.5",
+      "confidence": 0.95,
+      "source_span": "Hemoglobin: 10.4 g/dL",
+      "entity_type": "BIOMARKER_ENTITY"
+    },
+    "b12": {
+      "canonical_name": "Vitamin B12",
+      "value": 210.0,
+      "raw_value": 210.0,
+      "unit": "pg/mL",
+      "ref_range": "200.0 - 900.0",
+      "confidence": 0.95,
+      "source_span": "Vitamin B12: 210 pg/mL",
+      "entity_type": "BIOMARKER_ENTITY"
+    },
+    "folate": {
+      "canonical_name": "Serum Folate",
+      "value": 4.8,
+      "raw_value": 4.8,
+      "unit": "ng/mL",
+      "ref_range": "4.6 - 18.7",
+      "confidence": 0.95,
+      "source_span": "Folate: 4.8 ng/mL",
+      "entity_type": "BIOMARKER_ENTITY"
+    }
+  },
+  "confidence_summary": 0.95
+}
