@@ -3,6 +3,7 @@ Brevo email integration for reminder confirmations and lead-time reminders.
 Degrades gracefully (logs + returns False) when no API key is configured.
 """
 import base64
+import html
 import logging
 import os
 
@@ -58,6 +59,35 @@ def _build_email_body(reminder: Reminder) -> str:
     return text, link, ics
 
 
+def _render_html(body: str, link: str, kind: str) -> str:
+    """Wrap the appointment body in a clean, branded HTML email layout."""
+    link_label = "Add to Google Calendar" if kind == "confirmation" else "View Calendar Link"
+    escaped = html.escape(body).replace("\n", "<br/>")
+    safe_link = html.escape(link, quote=True)
+    return (
+        '<div style="font-family:Arial,Helvetica,sans-serif;background:#f5f7fa;margin:0;padding:24px;">'
+        '<div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;'
+        'overflow:hidden;border:1px solid #e5e7eb;">'
+        '<div style="background:#1D61E7;color:#ffffff;padding:20px 28px;">'
+        '<span style="font-size:20px;font-weight:700;">VitaScan</span>'
+        "</div>"
+        '<div style="padding:28px;color:#1f2937;font-size:15px;line-height:1.6;">'
+        f"{escaped}"
+        f'<div style="margin:24px 0;">'
+        f'<a href="{safe_link}" style="display:inline-block;background:#1D61E7;color:#ffffff;'
+        f'text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:600;">{html.escape(link_label)}</a>'
+        f"</div>"
+        f'<p style="color:#6b7280;font-size:13px;">If the button does not work, '
+        f'copy this link: <a href="{safe_link}" style="color:#1D61E7;">{html.escape(link)}</a></p>'
+        "</div>"
+        '<div style="background:#f1f5f9;padding:16px 28px;color:#9ca3af;font-size:12px;">'
+        "This is an automated appointment reminder from VitaScan."
+        "</div>"
+        "</div>"
+        "</div>"
+    )
+
+
 def _send(brevo_key: str | None, to_email: str, subject: str, html: str, ics: str | None = None) -> bool:
     if not brevo_key:
         logger.warning("BREVO_API_KEY not set; skipping email to %s (subject: %s)", to_email, subject)
@@ -67,7 +97,7 @@ def _send(brevo_key: str | None, to_email: str, subject: str, html: str, ics: st
         "sender": {"email": sender_email, "name": sender_name},
         "to": [{"email": to_email}],
         "subject": subject,
-        "htmlContent": html.replace("\n", "<br/>"),
+        "htmlContent": html,
     }
     if ics is not None:
         payload["attachment"] = [
@@ -91,10 +121,7 @@ def send_confirmation_email(reminder: Reminder, brevo_key: str | None = None) ->
     """Send the immediate confirmation email with a calendar link and .ics."""
     brevo_key = brevo_key or get_brevo_key()
     body, link, ics = _build_email_body(reminder)
-    html = (
-        body
-        + f"<hr/><p>If the link above does not work, copy-paste this into your browser:</p><p>{link}</p>"
-    )
+    html = _render_html(body, link, "confirmation")
     subject = f"Medical Appointment Reminder: {reminder.title}"
     return _send(brevo_key, reminder.email, subject, html, ics=ics)
 
@@ -103,9 +130,6 @@ def send_reminder_email(reminder: Reminder, brevo_key: str | None = None) -> boo
     """Send the lead-time reminder email."""
     brevo_key = brevo_key or get_brevo_key()
     body, link, _ = _build_email_body(reminder)
-    html = (
-        body
-        + f"<hr/><p>Calendar link: {link}</p>"
-    )
+    html = _render_html(body, link, "reminder")
     subject = f"Reminder: {reminder.title} on {_format_appointment(reminder)}"
     return _send(brevo_key, reminder.email, subject, html)

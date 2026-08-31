@@ -46,8 +46,6 @@ def test_send_confirmation_email_posts_to_brevo():
     attachment = payload["attachment"][0]
     assert attachment["name"] == "appointment.ics"
     assert b"BEGIN:VCALENDAR" in base64.b64decode(attachment["content"])
-
-
 def test_send_reminder_email_posts_to_brevo():
     r = make_reminder()
     with patch("backend.reminders.emailer.httpx.post") as mock_post:
@@ -57,3 +55,22 @@ def test_send_reminder_email_posts_to_brevo():
     _, kwargs = mock_post.call_args
     assert kwargs["url"] == emailer.BREVO_URL
     assert kwargs["headers"]["api-key"] == "xkeysib_abc"
+
+
+def test_render_html_escapes_body_and_link_wraps_in_layout():
+    rendered = emailer._render_html(
+        "Hi,\n\nYour appointment", "https://calendar.google.com/event?a=1&b=2", "confirmation"
+    )
+    assert rendered.startswith("<div")
+    assert "VitaScan" in rendered
+    assert "Add to Google Calendar" in rendered
+    assert "&amp;b=2" in rendered
+    assert "Hi,<br/><br/>Your appointment" in rendered
+    assert "This is an automated appointment reminder from VitaScan." in rendered
+
+
+def test_render_html_uses_reminder_button_label():
+    rendered = emailer._render_html("body", "https://example.com", "reminder")
+    assert "View Calendar Link" in rendered
+    assert "Add to Google Calendar" not in rendered
+
