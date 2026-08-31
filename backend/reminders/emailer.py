@@ -1,7 +1,8 @@
 """
-Resend email integration for reminder confirmations and lead-time reminders.
+Brevo email integration for reminder confirmations and lead-time reminders.
 Degrades gracefully (logs + returns False) when no API key is configured.
 """
+import base64
 import logging
 import os
 
@@ -17,15 +18,22 @@ from backend.reminders.schemas import Reminder
 
 logger = logging.getLogger("vitascan.reminders.emailer")
 
-RESEND_URL = "https://api.resend.com/emails"
+BREVO_URL = "https://api.brevo.com/v3/smtp/email"
 
 
-def get_resend_key() -> str | None:
-    return os.getenv("RESEND_API_KEY", "").strip() or None
+def get_brevo_key() -> str | None:
+    return os.getenv("BREVO_API_KEY", "").strip() or None
 
 
-def get_resend_from() -> str:
-    return os.getenv("RESEND_FROM", "VitaScan <onboarding@resend.dev>")
+def get_brevo_from() -> str:
+    return os.getenv("BREVO_FROM", "VitaScan <kamleshkmistry33@gmail.com>")
+
+
+def _split_sender(value: str) -> tuple[str, str]:
+    if "<" in value:
+        name, email = (part.strip() for part in value.split("<", 1))
+        return (name or "VitaScan"), email.rstrip(">").strip()
+    return "VitaScan", value.strip()
 
 
 def _format_appointment(reminder: Reminder) -> str:
@@ -50,56 +58,54 @@ def _build_email_body(reminder: Reminder) -> str:
     return text, link, ics
 
 
-def _send(resend_key: str | None, to_email: str, subject: str, html: str, ics: str | None = None) -> bool:
-    if not resend_key:
-        logger.warning("RESEND_API_KEY not set; skipping email to %s (subject: %s)", to_email, subject)
+def _send(brevo_key: str | None, to_email: str, subject: str, html: str, ics: str | None = None) -> bool:
+    if not brevo_key:
+        logger.warning("BREVO_API_KEY not set; skipping email to %s (subject: %s)", to_email, subject)
         return False
-    attachments = []
-    if ics is not None:
-        attachments.append(
-            {
-                "filename": "appointment.ics",
-                "content": ics,
-            }
-        )
+    sender_name, sender_email = _split_sender(get_brevo_from())
     payload = {
-        "from": get_resend_from(),
-        "to": [to_email],
+        "sender": {"email": sender_email, "name": sender_name},
+        "to": [{"email": to_email}],
         "subject": subject,
-        "html": html.replace("\n", "<br/>"),
+        "htmlContent": html.replace("\n", "<br/>"),
     }
-    if attachments:
-        payload["attachments"] = attachments
+    if ics is not None:
+        payload["attachment"] = [
+            {
+                "content": base64.b64encode(ics.encode("utf-8")).decode("ascii"),
+                "name": "appointment.ics",
+            }
+        ]
     try:
-        response = httpx.post(url=RESEND_URL, json=payload, headers={"Authorization": f"Bearer {resend_key}"}, timeout=15)
+        response = httpx.post(url=BREVO_URL, json=payload, headers={"api-key": brevo_key}, timeout=15)
         if response.status_code >= 400:
-            logger.warning("Resend returned status %s: %s", response.status_code, response.text)
+            logger.warning("Brevo returned status %s: %s", response.status_code, response.text)
             return False
         return True
     except Exception as e:  # noqa: BLE001
-        logger.warning("Resend request failed: %s", e)
+        logger.warning("Brevo request failed: %s", e)
         return False
 
 
-def send_confirmation_email(reminder: Reminder, resend_key: str | None = None) -> bool:
+def send_confirmation_email(reminder: Reminder, brevo_key: str | None = None) -> bool:
     """Send the immediate confirmation email with a calendar link and .ics."""
-    resend_key = resend_key or get_resend_key()
+    brevo_key = brevo_key or get_brevo_key()
     body, link, ics = _build_email_body(reminder)
     html = (
         body
         + f"<hr/><p>If the link above does not work, copy-paste this into your browser:</p><p>{link}</p>"
     )
     subject = f"Medical Appointment Reminder: {reminder.title}"
-    return _send(resend_key, reminder.email, subject, html, ics=ics)
+    return _send(brevo_key, reminder.email, subject, html, ics=ics)
 
 
-def send_reminder_email(reminder: Reminder, resend_key: str | None = None) -> bool:
+def send_reminder_email(reminder: Reminder, brevo_key: str | None = None) -> bool:
     """Send the lead-time reminder email."""
-    resend_key = resend_key or get_resend_key()
+    brevo_key = brevo_key or get_brevo_key()
     body, link, _ = _build_email_body(reminder)
     html = (
         body
         + f"<hr/><p>Calendar link: {link}</p>"
     )
     subject = f"Reminder: {reminder.title} on {_format_appointment(reminder)}"
-    return _send(resend_key, reminder.email, subject, html)
+    return _send(brevo_key, reminder.email, subject, html)
