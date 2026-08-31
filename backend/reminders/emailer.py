@@ -75,7 +75,7 @@ def _render_html(body: str, link: str, kind: str) -> str:
         f"{escaped}"
         f'<div style="margin:24px 0;">'
         f'<a href="{safe_link}" style="display:inline-block;background:#1D61E7;color:#ffffff;'
-        f'text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:600;">{html.escape(link_label)}</a>'
+        f'text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:600;">{link_label}</a>'
         f"</div>"
         f'<p style="color:#6b7280;font-size:13px;">If the button does not work, '
         f'copy this link: <a href="{safe_link}" style="color:#1D61E7;">{html.escape(link)}</a></p>'
@@ -88,7 +88,7 @@ def _render_html(body: str, link: str, kind: str) -> str:
     )
 
 
-def _send(brevo_key: str | None, to_email: str, subject: str, html: str, ics: str | None = None) -> bool:
+def _send(brevo_key: str | None, to_email: str, subject: str, html_content: str, ics: str | None = None) -> bool:
     if not brevo_key:
         logger.warning("BREVO_API_KEY not set; skipping email to %s (subject: %s)", to_email, subject)
         return False
@@ -97,7 +97,7 @@ def _send(brevo_key: str | None, to_email: str, subject: str, html: str, ics: st
         "sender": {"email": sender_email, "name": sender_name},
         "to": [{"email": to_email}],
         "subject": subject,
-        "htmlContent": html,
+        "htmlContent": html_content,
     }
     if ics is not None:
         payload["attachment"] = [
