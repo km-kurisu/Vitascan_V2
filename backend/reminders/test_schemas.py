@@ -1,9 +1,11 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from datetime import datetime, timezone
-from backend.reminders.schemas import ReminderCreate, Reminder
+
+from backend.reminders.schemas import Reminder, ReminderCreate
 
 
 def test_reminder_create_defaults():

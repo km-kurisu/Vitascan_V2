@@ -5,16 +5,20 @@ fallback store so the feature works without Supabase credentials.
 import logging
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Dict, List, Optional
 
-from backend.reminders.schemas import Reminder, ReminderCreate
-from backend.reminders.calendar_link import build_calendar_url, build_ics, appointment_end_iso, to_utc_iso
+from backend.reminders.calendar_link import (
+    appointment_end_iso,
+    build_calendar_url,
+    build_ics,
+    to_utc_iso,
+)
 from backend.reminders.emailer import send_confirmation_email, send_reminder_email
+from backend.reminders.schemas import Reminder, ReminderCreate
 from backend.shared.supabase_client import get_supabase_client
 
 logger = logging.getLogger("vitascan.reminders.service")
 
-_IN_MEMORY: Dict[str, Reminder] = {}
+_IN_MEMORY: dict[str, Reminder] = {}
 
 
 def _compute_calendar_fields(r: Reminder) -> Reminder:
@@ -72,7 +76,7 @@ def create_reminder(data: ReminderCreate) -> Reminder:
     return reminder
 
 
-def list_reminders(patient_id: str) -> List[Reminder]:
+def list_reminders(patient_id: str) -> list[Reminder]:
     client = get_supabase_client()
     if client is not None:
         try:
@@ -98,7 +102,7 @@ def delete_reminder(reminder_id: str) -> bool:
     return existed
 
 
-def _row_to_reminder(row: Dict) -> Reminder:
+def _row_to_reminder(row: dict) -> Reminder:
     r = Reminder(
         id=row.get("id", ""),
         patient_id=row.get("patient_id", ""),
@@ -114,7 +118,7 @@ def _row_to_reminder(row: Dict) -> Reminder:
     return _compute_calendar_fields(r)
 
 
-def _parse_dt(value) -> Optional[datetime]:
+def _parse_dt(value) -> datetime | None:
     if not value:
         return None
     try:
@@ -123,7 +127,7 @@ def _parse_dt(value) -> Optional[datetime]:
         return None
 
 
-def process_due_reminders(resend_key: Optional[str] = None) -> int:
+def process_due_reminders(resend_key: str | None = None) -> int:
     """Send lead-time reminder emails for overdue reminders (run on API calls)."""
     now = _now()
     sent_count = 0
@@ -142,7 +146,7 @@ def process_due_reminders(resend_key: Optional[str] = None) -> int:
     return sent_count
 
 
-def _all_reminders() -> List[Reminder]:
+def _all_reminders() -> list[Reminder]:
     client = get_supabase_client()
     if client is not None:
         try:

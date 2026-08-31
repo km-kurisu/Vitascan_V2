@@ -1,12 +1,14 @@
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from datetime import datetime, timezone
+
 from backend.reminders.calendar_link import (
+    appointment_end_iso,
     build_calendar_url,
     build_ics,
-    appointment_end_iso,
     to_utc_iso,
 )
 
