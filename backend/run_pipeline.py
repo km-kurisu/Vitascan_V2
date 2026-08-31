@@ -32,6 +32,14 @@ from backend.path_a_symptom_image.mod_a1_preprocess.preprocess import ImagePrepr
 from backend.path_a_symptom_image.mod_a2_cnn.cnn_model import SymptomCNNClassifier
 from backend.path_a_symptom_image.mod_a3_crosscheck.crosscheck import PathACrosscheckSignal
 from backend.mod_c_explainer.formatter import ModCFormatter
+from datetime import datetime, timezone
+from backend.reminders.schemas import ReminderCreate
+from backend.reminders.reminders_service import (
+    create_reminder,
+    list_reminders,
+    delete_reminder,
+    process_due_reminders,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("vitascan.orchestrator")
@@ -271,6 +279,32 @@ def get_results_deficiency_detail(deficiency_type: str):
         if d.get("type").lower() == deficiency_type.lower():
             return d
     raise HTTPException(status_code=404, detail=f"Deficiency type '{deficiency_type}' not found.")
+
+
+@app.post("/reminders")
+def create_reminder_endpoint(payload: ReminderCreate):
+    """Create a reminder: sends confirmation email + stores it, then fires any due reminders."""
+    if payload.appointment_at <= datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="Appointment time must be in the future")
+    reminder = create_reminder(payload)
+    process_due_reminders()
+    return reminder.model_dump()
+
+
+@app.get("/reminders")
+def list_reminders_endpoint(patient_id: str):
+    """List reminders for a patient, firing any due lead-time reminder emails first."""
+    process_due_reminders()
+    reminders = list_reminders(patient_id)
+    return [r.model_dump() for r in reminders]
+
+
+@app.delete("/reminders/{reminder_id}")
+def delete_reminder_endpoint(reminder_id: str):
+    """Delete a reminder. Returns 404 if it did not exist."""
+    if not delete_reminder(reminder_id):
+        raise HTTPException(status_code=404, detail="Reminder not found")
+    return {"deleted": True}
 
 
 if __name__ == "__main__":
