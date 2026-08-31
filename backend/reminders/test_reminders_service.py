@@ -26,7 +26,7 @@ def test_process_due_reminders_marks_sent(monkeypatch):
     assert r.status == "confirmed"
 
     with patch("backend.reminders.reminders_service.send_reminder_email", return_value=True) as mock_send:
-        count = reminders_service.process_due_reminders(resend_key="re_abc")
+        count = reminders_service.process_due_reminders(brevo_key="re_abc")
 
     assert count == 1
     mock_send.assert_called_once()
@@ -41,7 +41,7 @@ def test_process_due_reminders_skips_future(monkeypatch):
     reminders_service.create_reminder(make_create(future))
 
     with patch("backend.reminders.reminders_service.send_reminder_email", return_value=True) as mock_send:
-        count = reminders_service.process_due_reminders(resend_key="re_abc")
+        count = reminders_service.process_due_reminders(brevo_key="re_abc")
 
     assert count == 0
     mock_send.assert_not_called()

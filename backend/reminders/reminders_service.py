@@ -127,7 +127,7 @@ def _parse_dt(value) -> datetime | None:
         return None
 
 
-def process_due_reminders(resend_key: str | None = None) -> int:
+def process_due_reminders(brevo_key: str | None = None) -> int:
     """Send lead-time reminder emails for overdue reminders (run on API calls)."""
     now = _now()
     sent_count = 0
@@ -138,7 +138,7 @@ def process_due_reminders(resend_key: str | None = None) -> int:
         due_at = r.appointment_at - timedelta(minutes=r.lead_minutes)
         if due_at > now:
             continue
-        if send_reminder_email(r, resend_key=resend_key):
+        if send_reminder_email(r, brevo_key=brevo_key):
             r.reminder_sent_at = now
             r.status = "sent"
             _update_reminder(r)
