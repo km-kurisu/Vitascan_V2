@@ -11,6 +11,7 @@ const isPublicRoute = createRouteMatcher([
   '/processing(.*)',
   '/results(.*)',
   '/upload(.*)',
+  '/reminders(.*)',
 ]);
 
 export default clerkMiddleware((auth, req) => {
